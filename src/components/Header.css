@@ -1,0 +1,67 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background-color: var(--header-bg);
+  color: var(--header-text);
+  border-bottom: 1px solid var(--border-color);
+  min-height: 56px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+.header-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--header-text);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-button {
+  padding: 6px 12px;
+  background-color: transparent;
+  color: var(--header-text);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.header-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: var(--header-text);
+}
+
+.dark-mode-toggle {
+  font-size: 18px;
+  padding: 6px 10px;
+}
+
+.header-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 14px;
+}
+
+.header-checkbox input[type='checkbox'] {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+}
+
+.header-checkbox span {
+  color: var(--header-text);
+}

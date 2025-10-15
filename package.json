@@ -1,0 +1,25 @@
+{
+  "name": "eazy-markdown",
+  "version": "2.0.0",
+  "description": "Eazy Markdown - A modern React app for previewing Markdown in real-time with dark mode support",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "marked": "^15.0.7",
+    "dompurify": "^3.2.5",
+    "@monaco-editor/react": "^4.6.0",
+    "monaco-editor": "^0.52.2"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.3",
+    "vite": "^6.3.6"
+  }
+}
