@@ -1,14 +1,26 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import './Header.css'
 
-function Header({ onReset, onCopy, onDownload, syncScroll, onToggleSyncScroll, isDarkMode, onToggleDarkMode }) {
+function Header({ onReset, onCopy, onDownload, onImport, syncScroll, onToggleSyncScroll, isDarkMode, onToggleDarkMode }) {
   const [copied, setCopied] = useState(false)
+  const fileInputRef = useRef(null)
 
   const handleCopy = async () => {
     const success = await onCopy()
     if (success) {
       setCopied(true)
       setTimeout(() => setCopied(false), 1000)
+    }
+  }
+
+  const handleImportClick = () => {
+    fileInputRef.current?.click()
+  }
+
+  const handleFileChange = (event) => {
+    const file = event.target.files?.[0]
+    if (file) {
+      onImport(file)
     }
   }
 
@@ -21,6 +33,16 @@ function Header({ onReset, onCopy, onDownload, syncScroll, onToggleSyncScroll, i
         <button onClick={onReset} className="header-button">
           Reset
         </button>
+        <button onClick={handleImportClick} className="header-button">
+          Import
+        </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".txt,.md"
+          onChange={handleFileChange}
+          style={{ display: 'none' }}
+        />
         <button onClick={handleCopy} className="header-button">
           {copied ? 'Copied!' : 'Copy'}
         </button>

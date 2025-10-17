@@ -140,6 +140,18 @@ function App() {
     URL.revokeObjectURL(url)
   }
 
+  const handleImport = (file) => {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const content = e.target.result
+      setMarkdown(content)
+    }
+    reader.onerror = () => {
+      console.error('Failed to read file')
+    }
+    reader.readAsText(file)
+  }
+
   const toggleDarkMode = () => {
     const newMode = !isDarkMode
     setIsDarkMode(newMode)
@@ -164,6 +176,7 @@ function App() {
         onReset={handleReset}
         onCopy={handleCopy}
         onDownload={handleDownload}
+        onImport={handleImport}
         syncScroll={syncScroll}
         onToggleSyncScroll={toggleSyncScroll}
         isDarkMode={isDarkMode}
