@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import './Header.css'
 
-function Header({ onReset, onCopy, syncScroll, onToggleSyncScroll, isDarkMode, onToggleDarkMode }) {
+function Header({ onReset, onCopy, onDownload, syncScroll, onToggleSyncScroll, isDarkMode, onToggleDarkMode }) {
   const [copied, setCopied] = useState(false)
 
   const handleCopy = async () => {
@@ -23,6 +23,9 @@ function Header({ onReset, onCopy, syncScroll, onToggleSyncScroll, isDarkMode, o
         </button>
         <button onClick={handleCopy} className="header-button">
           {copied ? 'Copied!' : 'Copy'}
+        </button>
+        <button onClick={onDownload} className="header-button">
+          Download
         </button>
         <label className="header-checkbox">
           <input

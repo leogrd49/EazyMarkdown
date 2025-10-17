@@ -128,6 +128,18 @@ function App() {
     }
   }
 
+  const handleDownload = () => {
+    const blob = new Blob([markdown], { type: 'text/markdown' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = 'document.md'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+  }
+
   const toggleDarkMode = () => {
     const newMode = !isDarkMode
     setIsDarkMode(newMode)
@@ -151,6 +163,7 @@ function App() {
       <Header
         onReset={handleReset}
         onCopy={handleCopy}
+        onDownload={handleDownload}
         syncScroll={syncScroll}
         onToggleSyncScroll={toggleSyncScroll}
         isDarkMode={isDarkMode}
