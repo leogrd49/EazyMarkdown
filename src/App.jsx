@@ -5,7 +5,6 @@ import Preview from './components/Preview'
 import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 import jsPDF from 'jspdf'
-import html2canvas from 'html2canvas'
 import './App.css'
 
 const defaultMarkdown = `# Welcome to Eazy Markdown
@@ -148,44 +147,36 @@ function App() {
 
   const handleDownloadPDF = async () => {
     try {
-      const previewElement = previewRef.current
-      if (!previewElement) return
-
       // Get document title from first line of markdown
       const firstLine = markdown.split('\n')[0].replace(/^#+\s*/, '').trim() || 'document'
       const filename = firstLine.substring(0, 50) // Limit filename length
 
-      // Create canvas from the preview element
-      const canvas = await html2canvas(previewElement, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        backgroundColor: isDarkMode ? '#1a1a1a' : '#ffffff'
-      })
-
-      // Calculate PDF dimensions
-      const imgWidth = 210 // A4 width in mm
-      const pageHeight = 297 // A4 height in mm
-      const imgHeight = (canvas.height * imgWidth) / canvas.width
-
       // Create PDF
       const pdf = new jsPDF('p', 'mm', 'a4')
-      const imgData = canvas.toDataURL('image/png')
 
-      // Add image to PDF with proper pagination
-      let heightLeft = imgHeight
-      let position = 0
+      // PDF settings
+      const pageWidth = 210 // A4 width in mm
+      const pageHeight = 297 // A4 height in mm
+      const margin = 20
+      const maxWidth = pageWidth - 2 * margin
+      let yPosition = margin
 
-      // Add first page
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
-      heightLeft -= pageHeight
+      // Convert HTML to text content
+      const tempDiv = document.createElement('div')
+      tempDiv.innerHTML = html
+      const textContent = tempDiv.innerText
 
-      // Add additional pages if needed
-      while (heightLeft > 0) {
-        position = -pageHeight * Math.ceil((imgHeight - heightLeft) / pageHeight)
-        pdf.addPage()
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
-        heightLeft -= pageHeight
+      // Split text into lines and add to PDF
+      pdf.setFontSize(11)
+      const lines = pdf.splitTextToSize(textContent, maxWidth)
+
+      for (let i = 0; i < lines.length; i++) {
+        if (yPosition > pageHeight - margin) {
+          pdf.addPage()
+          yPosition = margin
+        }
+        pdf.text(lines[i], margin, yPosition)
+        yPosition += 7
       }
 
       // Download PDF with title from first line
