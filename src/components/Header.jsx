@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react'
 import './Header.css'
 
-function Header({ onReset, onCopy, onDownload, onImport, syncScroll, onToggleSyncScroll, isDarkMode, onToggleDarkMode }) {
+function Header({ onReset, onCopy, onDownload, onDownloadPDF, onImport, syncScroll, onToggleSyncScroll, isDarkMode, onToggleDarkMode }) {
   const [copied, setCopied] = useState(false)
   const fileInputRef = useRef(null)
 
@@ -47,7 +47,10 @@ function Header({ onReset, onCopy, onDownload, onImport, syncScroll, onToggleSyn
           {copied ? 'Copied!' : 'Copy'}
         </button>
         <button onClick={onDownload} className="header-button">
-          Download
+          Download MD
+        </button>
+        <button onClick={onDownloadPDF} className="header-button">
+          Download PDF
         </button>
         <label className="header-checkbox">
           <input

@@ -4,6 +4,8 @@ import Editor from './components/Editor'
 import Preview from './components/Preview'
 import { marked } from 'marked'
 import DOMPurify from 'dompurify'
+import jsPDF from 'jspdf'
+import html2canvas from 'html2canvas'
 import './App.css'
 
 const defaultMarkdown = `# Welcome to Eazy Markdown
@@ -140,6 +142,48 @@ function App() {
     URL.revokeObjectURL(url)
   }
 
+  const handleDownloadPDF = async () => {
+    try {
+      const previewElement = previewRef.current
+      if (!previewElement) return
+
+      // Create canvas from the preview element
+      const canvas = await html2canvas(previewElement, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: isDarkMode ? '#1a1a1a' : '#ffffff'
+      })
+
+      // Calculate PDF dimensions
+      const imgWidth = 210 // A4 width in mm
+      const pageHeight = 297 // A4 height in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width
+      let heightLeft = imgHeight
+      let position = 0
+
+      // Create PDF
+      const pdf = new jsPDF('p', 'mm', 'a4')
+      const imgData = canvas.toDataURL('image/png')
+
+      // Add image to PDF (with pagination if needed)
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
+      heightLeft -= pageHeight
+
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight
+        pdf.addPage()
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
+        heightLeft -= pageHeight
+      }
+
+      // Download PDF
+      pdf.save('document.pdf')
+    } catch (err) {
+      console.error('Failed to generate PDF:', err)
+    }
+  }
+
   const handleImport = (file) => {
     const reader = new FileReader()
     reader.onload = (e) => {
@@ -176,6 +220,7 @@ function App() {
         onReset={handleReset}
         onCopy={handleCopy}
         onDownload={handleDownload}
+        onDownloadPDF={handleDownloadPDF}
         onImport={handleImport}
         syncScroll={syncScroll}
         onToggleSyncScroll={toggleSyncScroll}
