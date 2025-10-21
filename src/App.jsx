@@ -131,11 +131,15 @@ function App() {
   }
 
   const handleDownload = () => {
+    // Get document title from first line of markdown
+    const firstLine = markdown.split('\n')[0].replace(/^#+\s*/, '').trim() || 'document'
+    const filename = firstLine.substring(0, 50) // Limit filename length
+
     const blob = new Blob([markdown], { type: 'text/markdown' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
-    link.download = 'document.md'
+    link.download = `${filename}.md`
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
@@ -146,6 +150,10 @@ function App() {
     try {
       const previewElement = previewRef.current
       if (!previewElement) return
+
+      // Get document title from first line of markdown
+      const firstLine = markdown.split('\n')[0].replace(/^#+\s*/, '').trim() || 'document'
+      const filename = firstLine.substring(0, 50) // Limit filename length
 
       // Create canvas from the preview element
       const canvas = await html2canvas(previewElement, {
@@ -159,26 +167,29 @@ function App() {
       const imgWidth = 210 // A4 width in mm
       const pageHeight = 297 // A4 height in mm
       const imgHeight = (canvas.height * imgWidth) / canvas.width
-      let heightLeft = imgHeight
-      let position = 0
 
       // Create PDF
       const pdf = new jsPDF('p', 'mm', 'a4')
       const imgData = canvas.toDataURL('image/png')
 
-      // Add image to PDF (with pagination if needed)
+      // Add image to PDF with proper pagination
+      let heightLeft = imgHeight
+      let position = 0
+
+      // Add first page
       pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
       heightLeft -= pageHeight
 
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight
+      // Add additional pages if needed
+      while (heightLeft > 0) {
+        position = -pageHeight * Math.ceil((imgHeight - heightLeft) / pageHeight)
         pdf.addPage()
         pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
         heightLeft -= pageHeight
       }
 
-      // Download PDF
-      pdf.save('document.pdf')
+      // Download PDF with title from first line
+      pdf.save(`${filename}.pdf`)
     } catch (err) {
       console.error('Failed to generate PDF:', err)
     }
